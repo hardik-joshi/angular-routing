@@ -11,29 +11,30 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { AuthGuard } from './auth-guard.service';
 import { CanDeactivateGuard } from './servers/edit-server/can-deactivate-guard.service'
 import { ErrorPageComponent } from './error-page/error-page.component';
+import {ServerResolver} from './servers/server/server-resolver.service';
 
 const appRoutes: Routes = [
     { path: '', component: HomeComponent },
-    { 
-        path: 'servers', 
-        //canActivate: [AuthGuard], 
+    {
+        path: 'servers',
+        // canActivate: [AuthGuard],
         canActivateChild: [AuthGuard],
-        component: ServersComponent, 
+        component: ServersComponent,
         children: [
-            { path: ':id', component: ServerComponent },
+            { path: ':id', component: ServerComponent, resolve: {server: ServerResolver} }, // for dynamic data use resolve attribute
             { path: ':id/edit', component: EditServerComponent, canDeactivate: [CanDeactivateGuard]}
         ]},
     { path: 'users', component: UsersComponent, children: [
       { path: ':id/:name', component: UserComponent }
     ]},
-    //{ path: 'not-found', component: PageNotFoundComponent },
-    { path: 'not-found', component: ErrorPageComponent, data: {message: 'Page not found!'} },
+    // { path: 'not-found', component: PageNotFoundComponent },
+    { path: 'not-found', component: ErrorPageComponent, data: {message: 'Page not found!'} }, // for static data use data attribute
     { path: '**', redirectTo: '/not-found'}
   ];
 
 @NgModule({
     imports: [
-        RouterModule.forRoot(appRoutes)
+        RouterModule.forRoot(appRoutes) // , {useHash: true}
     ],
     exports: [RouterModule]
 })
